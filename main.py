@@ -1,4 +1,3 @@
-import build_tree as bt
 import autocomplete as ac
 import json
 
@@ -27,7 +26,7 @@ if __name__ == "__main__":
             term = get_search_term("start searching: \n")
         result = ac.autocomplete(raw_string(term), trie, strings)
         for res in result:
-            print("\033[91m {}\033[00m" .format(f"{res.completed_sentence} ({res.source_text}) score: {res.score} offset: {res.offset}"))
+            res.print()
         if term[-1] == "#":
             term = get_search_term("start searching: \n")
         else:

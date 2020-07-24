@@ -14,4 +14,6 @@ class AutoCompleteData:
         self.offset = offset
         self.score = score
 
-# methods that you need to define by yourself
+    def print(self):
+        print(f"\033[94m {f'{self.completed_sentence} ({self.source_text})'}\033[00m", end='')
+        print(f"\033[95m {f'score: {self.score} offset: {self.offset}'}\033[00m")

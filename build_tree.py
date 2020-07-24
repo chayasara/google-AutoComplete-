@@ -1,6 +1,9 @@
 import json
 import os
 
+max_matching_characters = 50
+num_suggestions = 5
+
 
 def node(id):
     return{
@@ -11,21 +14,23 @@ def node(id):
 
 def insert_string_to_trie(root, string, id):
     cur = root
-    for letter in string[:15]:
+    for letter in string[:max_matching_characters]:
         if letter not in cur['next_letters']:
             cur['next_letters'][letter] = node(id)
         elif id not in cur['next_letters'][letter]['ids']:
-            cur['next_letters'][letter]['ids'].append(id)
+            if len(cur['next_letters'][letter]['ids']) < num_suggestions:
+                cur['next_letters'][letter]['ids'].append(id)
         cur = cur['next_letters'][letter]
 
 
 def split_data(data, file_name):
     return [(string, file_name) for string in data]
 
+
 def walk_in_file_tree():
     for root, dirs, files in os.walk('./nice_sentences'):
         for file in files:
-            data = open(os.path.join(root, file),"r")
+            data = open(os.path.join(root, file), "r")
             yield data, file
 
 
@@ -40,7 +45,7 @@ def insert_substrings_to_trie(trie, string, id):
         insert_string_to_trie(trie, ''.join(words[i:]), id)
 
 
-def insert_lines_to_trie(root):
+def insert_strings_and_map(root):
     id = 0
     mapped_data = []
     for data_file, file_name in walk_in_file_tree():
@@ -55,10 +60,9 @@ def insert_lines_to_trie(root):
 
 def build_trie():
     root = node(0)
-    mapped_data = insert_lines_to_trie(root)
+    mapped_data = insert_strings_and_map(root)
 
     data_for_file = [{"strings": mapped_data}, {"trie": root}]
-
     with open("trie.json", "w") as f:
         json.dump(data_for_file, f)
 
